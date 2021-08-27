@@ -3,7 +3,7 @@
 $card_directory = "./cards/"; // must be writable
 $cache_file = ".cache.json";  // must start with .
 
-$read_only = false; // set to true when you don't trust users (otherwise any content can be written on the server)
+$read_only = true; // set to true when you don't trust users (otherwise any content can be written on the server)
 
 /*
  * Oxford dictionary API

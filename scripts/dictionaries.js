@@ -271,7 +271,6 @@ class ReversoTranslationsDictionary extends Dictionary {
 
 var dicts = {
    "api":ApiDictionary,
-   "oxford":OxfordDictionary,
    "reverso": ReversoDictionary,
    "urban": UrbanDictionary,
 };
