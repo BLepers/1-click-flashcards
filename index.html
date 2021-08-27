@@ -1,0 +1,492 @@
+<!DOCTYPE HTML>
+<html>
+   <head>
+      <title>Flashcards</title>
+      <meta http-equiv="content-Type" content="text/html; charset=UTF-8" />
+      <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1, user-scalable=no"> 
+
+      <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script> 
+      <script src="scripts/utils.js"></script> 
+      <script src="scripts/dictionaries.js"></script> 
+      <script src="scripts/flashcards.js"></script> 
+      <script src="scripts/flashcards.ui.js"></script> 
+      <script src="scripts/teacher.js"></script> 
+      <script src="scripts/search.js"></script> 
+
+      <style type="text/css">
+      @media (pointer: fine) {
+         .mobile {
+            display:none!important;
+         }
+      }
+      @media (pointer: coarse) {
+         .pc {
+            display:none!important;
+         }
+      }
+
+      body {
+         background-color:rgb(208, 230, 223);
+         justify-content: center;
+         display:flex;
+         overflow-y:scroll;
+      }
+      p {
+         margin:0;
+      }
+
+      .tmpl {
+         display:none;
+      }
+
+      #main {
+         position:relative;
+         min-height: 100%;
+         transform:translateX(-25px);
+         margin-top:50px;
+      }
+
+      #flashcard_list_info {
+         font-size:small;
+         text-align: right;
+         padding: 5px;
+         width:265px;
+      }
+
+      .flist {
+         list-style-type: none;
+         padding:0;
+         margin:0;
+      }
+
+      .learn {
+         width:275px;
+         text-align:center;
+         justify-content:center;
+         background-color:#00aadd;
+         border-radius:10px;
+         box-shadow:0px 3px #b0babf;
+         position:relative;
+         margin-bottom: 10px;
+         margin-top:10px;
+
+         display: flex;
+         flex-direction: column;
+         min-height: 50px;
+
+         font-size: 28px;
+         font-weight: 400;
+         line-height: 36px;
+
+         cursor:pointer;
+      }
+
+      .smallcard {
+         width:275px;
+         border-radius:10px;
+         box-shadow:0 3px #00aaff;
+         text-align:center;
+         justify-content:center;
+         background-color:rgb(255, 255, 255);
+         position:relative;
+         margin-bottom: 10px;
+
+         display: flex;
+         flex-direction: column;
+         min-height: 50px;
+
+         font-size: 28px;
+         font-weight: 400;
+         line-height: 36px;
+
+         cursor:pointer;
+      }
+
+
+      .flashcard {
+         width:275px;
+         border-radius:10px;
+         box-shadow:0 3px #00aaff;
+         text-align:center;
+         background-color:rgb(255, 255, 255);
+         position:relative;
+
+         display: flex;
+         flex-direction: column;
+         margin-bottom: 10px;
+      }
+
+      .flashcard .sound {
+         height:32px;
+         width:32px;
+         cursor:pointer;
+         position:absolute;
+         top:5px;
+         left:5px;
+      }
+
+      .flashcard .title {
+         font-size: 28px;
+         font-weight: 400;
+         line-height: 36px;
+
+         top:0;
+         left: 17px;
+         display: inline-block;
+         position: relative;
+         width: 225px;
+         padding-bottom:10px;
+      }
+
+      .flashcard .centered_title {
+         left: 0px;
+         width: 247px;
+      }
+
+      .flashcard .floating_action {
+         position:absolute;
+         top:0px;
+         right:-67px;
+         height:100%;
+      }
+
+      .flashcard .floating_action svg {
+         cursor:pointer;
+      }
+
+      .flashcard .floating_edit {
+         position: absolute;
+         top: 5px;
+         right: -47px;
+         height: 100%;
+      }
+
+      .flashcard .floating_image {
+         position: sticky;
+         top: 50px;
+      }
+
+      .flashcard #no_def {
+         position:relative;
+         top:10px;
+         width:225px;
+      }
+
+      .flashcard #definitions {
+         position:relative;
+         top:10px;
+         margin-right:20px;
+         text-align:justify;
+         list-style-type: symbols;
+      }
+
+      .flashcard #definitions .note {
+         background-color: #f1f3f4;
+         display: inline;
+         margin-right: 5px;
+         font-weight: bold;
+         font-size:small;
+         text-transform: uppercase;
+      }
+
+      .flashcard .content {
+         flex: 1;
+         padding-bottom:20px;
+         position:relative;
+      }
+      @media(hover: hover) and (pointer: fine) {
+         .flashcard .selectable_content:hover {
+            background-color:rgba(0, 255, 0, 0.05);
+         }
+      }
+
+      .flashcard .selected_content {
+         background-color:rgba(0, 255, 0, 0.05);
+      }
+      .flashcard .selected_content:before {
+         content: "";
+         background: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABgAAAAYCAYAAADgdz34AAAACXBIWXMAAA7EAAAOxAGVKw4bAAAB20lEQVRIia3WP2gUQRTH8c9dgggqSAoR/2FhG7RMEcyCKcQqKIJ/iK0iiCiIYAQHLIKgWASCrRDEyqCQVAoHkWCRwkJBrCQGC4tgEcHE82Ixexr2JrnL5V61vDf7+8777RtmSzoZwSGcxmt8ECh1UHwnpnAci7iPJ90dA3AT/flzDx6htzMdBH2YQXHD81sHBD14g2OFShWXy1sUh5GEOExjYmsATuJqIv8N1wUr7QOC3RjD9kKlhtv4Au0BgrI4hkcS1Vd4ltvXJoBTuJLIz+OaoFZPbB4Q7MVjjSNZxS3Bwtpkd/5SGRfQi1HBjw0Qo9LWPMeLYrKUi9/FPbGjtzgj+J7Y/RAmE+ILOCpYLBbK4hEf8d+ufrwU7CmIHxCtKcYv0fcG8TrgBrYV8n2Y/AeJXT7A4YTGhDg5yeiSWcEgugq1gxiQmcYQ7mgcik+4KPi5EWAOv5ElBPZjAGexq1Cr4rzg43riEVCxKvMuh5xIrNmHHYn8uGB8I/EIgIqaihmZP+KF0ex8vMewiuXWAPXIzNIUsoRhwedm4o2AiloOWc8ueIinKlY3D6hDol3LYidr18zhkqDaingaUI/44ZfEKeoWL/Jzgq+titPsryIesMEcMiWY3Yw4/AWXHm39R6t+aQAAAABJRU5ErkJggg==') center center;
+         background-size: 13px 13px;
+         width: 13px;
+         height: 13px;
+         position: absolute;
+         top: 3px;
+         left: -32px;
+      }
+      @media(hover: hover) and (pointer: fine) {
+         .flashcard .selected_content:hover {
+            border:1px red;
+            background-color:rgba(255, 0, 0, 0.05);
+         }
+      }
+
+       .flashcard #self_definition {
+          color: #70757a;
+       }
+
+      .flashcard .content .example  {
+         color: #70757a;
+      }
+
+      .flashcard .synonyms li {
+         cursor: pointer;
+         border-radius: 10px;
+         list-style-position: inside;
+         border: 1px solid rgb(218, 220, 224);
+         display: inline-block;
+         margin: 3px;
+         padding: 0px 5px 3px;
+         background-color: rgb(244, 244, 244);
+      }
+
+      .flashcard .more {
+         cursor: pointer;
+         border-radius: 10px;
+         list-style-position: inside;
+         border: 1px solid rgb(218, 220, 224);
+         display: inline-block;
+         margin: 0px 20px 0px;
+         padding: 1px 5px 3px;
+         background-color: rgb(184, 195, 186);
+         font-weight: bold;
+         margin: 5px 10px;
+      }
+
+      #header {
+         position:fixed;
+         top:0;
+         width: 326px;
+         transform: translateX(-50%);
+         -webkit-backface-visibility: hidden;
+         backface-visibility: hidden;
+         z-index: 2;
+         left: 50%;
+      }
+
+      #search {
+         width:275px;
+         padding:0;
+         border-radius: 10px;
+         border: 1px solid rgb(218, 220, 224);
+         height:28px;
+         margin-bottom:20px;
+         position:absolute;
+         top:6px;
+      }
+
+      #ratings {
+         width:269px;
+         height:28px;
+         margin-bottom:20px;
+         position:absolute;
+         padding-left: 4px;
+         top:6px;
+      }
+
+      .rate {
+         width:41px;
+         text-align:center;
+         justify-content:center;
+         background-color:#00aadd;
+         border-radius:10px;
+         box-shadow:0px 3px #b0babf;
+         position:relative;
+
+         display: inline-block;
+         min-height: 39px;
+
+         font-size: 28px;
+         font-weight: 400;
+         line-height: 36px;
+
+         cursor:pointer;
+      }
+      @media(hover: hover) and (pointer: fine) {
+         #stop_rate:hover, .rate:hover {
+            opacity:0.3;
+         }
+      }
+
+      #stop_rate {
+         position: absolute;
+         left: 280px;
+         top: 0;
+         cursor:pointer;
+      }
+
+
+      .inverted-border-radius {
+         position:absolute;
+         width:322px;
+         height:50px;
+         background-color:rgb(208, 230, 223);
+         border:0;
+         top:0;
+         pointer-events: none;
+      }
+
+      .inverted-border-radius::before {
+         content: "";
+         position: absolute;
+
+         background-color: transparent;
+         bottom: -50px;
+         height: 50px;
+         width: 276px;
+         border-top-left-radius: 10px;
+         border-top-right-radius: 10px;
+         box-shadow: 0 -25px 0 0 rgb(208, 230, 223);
+      }
+
+      #error, .error {
+         width:253px;
+         border-radius: 10px;
+         border: 1px solid rgb(218, 220, 224);
+         color: #D8000C;
+         background-color: #FFBABA;
+         margin-bottom:20px;
+         padding:10px;
+         text-align:center;
+      }
+
+      em {
+         color:#F00;
+      }
+
+      #expand_icon {
+         width: 40px;
+         margin-bottom: 40px;
+         cursor:pointer;
+      }
+
+      /* On mobile, put header at bottom */
+      @media (pointer: coarse) {
+         body {
+            min-height:100vh;
+         }
+         #main {
+            margin-top:5px;
+            margin-bottom:50px;
+         }
+         #header {
+            top:auto;
+            bottom:50px;
+         }
+         .inverted-border-radius {
+            transform:rotate(180deg);
+         }
+         .inverted-border-radius::before {
+            right:0;
+         }
+         #search {
+            top:12px;
+         }
+         #ratings {
+            top:0;
+         }
+      }
+      </style>
+      <script>
+window.addEventListener('myerror', function (e) {
+   $('#error').css('display', 'block').text(e.detail);
+   $([document.documentElement, document.body]).stop().animate({
+      scrollTop: 0,
+   }, 1000);
+});
+
+window.onerror = function (msg, url, line, col, error) {
+   $('#error').css('display', 'block').text(url+":"+line+" "+msg);
+   $([document.documentElement, document.body]).stop().animate({
+      scrollTop: 0,
+   }, 1000);
+   return false;
+};
+
+window.onhashchange = function(){
+   var str = location.hash;
+   var s = decodeURIComponent(str.replace(/^#!?/,''));
+   SearchEngine.search(s);
+};
+
+$(document).ready(function() {
+   SmallFlashCard.loadAll();
+   if(window.location.hash)
+      window.onhashchange();
+
+   $('.learn').click(function() {
+      Teacher.start();
+   });
+
+   $('#search').keyup(function(){
+      var self = this;
+
+      $.doTimeout( 'searchID', 250, function() {
+         SearchEngine.search($(self).val().replace(/\s*:\s*/,':'), true);
+      });
+   });
+});
+      </script>
+
+   </head>
+   <body>
+      <div id="header">
+         <div type="text" id="search_bg" class="inverted-border-radius"></div>
+         <input type="text" id="search" placeholder="Search word or type help..." autocapitalize="none">
+         <div id="ratings" style="display:none">
+            <p id="rate1" class="rate">1</p>
+            <p id="rate2" class="rate">2</p>
+            <p id="rate3" class="rate">3</p>
+            <p id="rate4" class="rate">4</p>
+            <p id="rate5" class="rate">5</p>
+            <p id="rate6" class="rate">6</p>
+            <p id="stop_rate">
+            <svg version="1.1" id="learn_icon" style="position: absolute;top: 9px;left: 7px;width:25px" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 122.88 101.37" style="enable-background:new 0 0 122.88 101.37" xml:space="preserve"><g><path d="M12.64,77.27l0.31-54.92h-6.2v69.88c8.52-2.2,17.07-3.6,25.68-3.66c7.95-0.05,15.9,1.06,23.87,3.76 c-4.95-4.01-10.47-6.96-16.36-8.88c-7.42-2.42-15.44-3.22-23.66-2.52c-1.86,0.15-3.48-1.23-3.64-3.08 C12.62,77.65,12.62,77.46,12.64,77.27L12.64,77.27z M103.62,19.48c-0.02-0.16-0.04-0.33-0.04-0.51c0-0.17,0.01-0.34,0.04-0.51V7.34 c-7.8-0.74-15.84,0.12-22.86,2.78c-6.56,2.49-12.22,6.58-15.9,12.44V85.9c5.72-3.82,11.57-6.96,17.58-9.1 c6.85-2.44,13.89-3.6,21.18-3.02V19.48L103.62,19.48z M110.37,15.6h9.14c1.86,0,3.37,1.51,3.37,3.37v77.66 c0,1.86-1.51,3.37-3.37,3.37c-0.38,0-0.75-0.06-1.09-0.18c-9.4-2.69-18.74-4.48-27.99-4.54c-9.02-0.06-18.03,1.53-27.08,5.52 c-0.56,0.37-1.23,0.57-1.92,0.56c-0.68,0.01-1.35-0.19-1.92-0.56c-9.04-4-18.06-5.58-27.08-5.52c-9.25,0.06-18.58,1.85-27.99,4.54 c-0.34,0.12-0.71,0.18-1.09,0.18C1.51,100.01,0,98.5,0,96.64V18.97c0-1.86,1.51-3.37,3.37-3.37h9.61l0.06-11.26 c0.01-1.62,1.15-2.96,2.68-3.28l0,0c8.87-1.85,19.65-1.39,29.1,2.23c6.53,2.5,12.46,6.49,16.79,12.25 c4.37-5.37,10.21-9.23,16.78-11.72c8.98-3.41,19.34-4.23,29.09-2.8c1.68,0.24,2.88,1.69,2.88,3.33h0V15.6L110.37,15.6z M68.13,91.82c7.45-2.34,14.89-3.3,22.33-3.26c8.61,0.05,17.16,1.46,25.68,3.66V22.35h-5.77v55.22c0,1.86-1.51,3.37-3.37,3.37 c-0.27,0-0.53-0.03-0.78-0.09c-7.38-1.16-14.53-0.2-21.51,2.29C79.09,85.15,73.57,88.15,68.13,91.82L68.13,91.82z M58.12,85.25 V22.46c-3.53-6.23-9.24-10.4-15.69-12.87c-7.31-2.8-15.52-3.43-22.68-2.41l-0.38,66.81c7.81-0.28,15.45,0.71,22.64,3.06 C47.73,78.91,53.15,81.64,58.12,85.25L58.12,85.25z"/></g></svg>
+            <svg version="1.1" id="stop_icon" style="position: absolute;top: 0;left: 0;width:40px" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 65.518 65.518" style="enable-background:new 0 0 65.518 65.518;" xml:space="preserve"><g><path d="M32.759,0C14.696,0,0,14.695,0,32.759s14.695,32.759,32.759,32.759s32.759-14.695,32.759-32.759S50.822,0,32.759,0z M6,32.759C6,18.004,18.004,6,32.759,6c6.648,0,12.734,2.443,17.419,6.472L12.472,50.178C8.443,45.493,6,39.407,6,32.759z M32.759,59.518c-5.948,0-11.447-1.953-15.895-5.248l37.405-37.405c3.295,4.448,5.248,9.947,5.248,15.895	C59.518,47.514,47.514,59.518,32.759,59.518z"/></svg>
+            </p>
+         </div>
+      </div>
+
+      <div id="main">
+         <div id="learn" class="learn mobile">Learn</div>
+         <div id="error" style="display:none"></div>
+         <div id="main_flashcard" style="display:none"></div>
+         <div id="learn" class="learn pc">Learn</div>
+         <div id="flashcard_list_info" style="display:none"></div>
+         <ul id="flashcard_list" class="flist" style="display:none"></ul>
+      </div>
+
+      <div id="flashcard_tmpl" class="tmpl">
+         <audio id="text_to_speech" preload="none"><source src="" type="audio/mpeg"></audio>
+         <div class="floating_action"><p class="floating_image"></p></div>
+         <p>
+            <svg enable-background="new 0 0 128 128" id="sound_icon" class="sound" version="1.1" viewBox="0 0 128 128" xml:space="preserve" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><g><g><g><path d="M64,115.5c-13.756,0-26.689-5.357-36.416-15.084C17.856,90.689,12.5,77.756,12.5,64     s5.356-26.689,15.084-36.416C37.311,17.857,50.244,12.5,64,12.5s26.689,5.357,36.416,15.084     C110.144,37.311,115.5,50.244,115.5,64s-5.356,26.689-15.084,36.416C90.689,110.143,77.756,115.5,64,115.5z M64,15.5     c-12.955,0-25.135,5.045-34.295,14.205C20.545,38.866,15.5,51.045,15.5,64s5.045,25.134,14.205,34.295     c9.16,9.16,21.34,14.205,34.295,14.205s25.135-5.045,34.295-14.205C107.455,89.134,112.5,76.955,112.5,64     s-5.045-25.134-14.205-34.295C89.135,20.545,76.955,15.5,64,15.5z" fill="#303031"/></g></g><g><g><g><path d="M84.556,64c0,7.277-3.069,13.847-7.975,18.497l2.684,2.964c5.713-5.383,9.29-13.01,9.29-21.46      c0-8.656-3.748-16.453-9.706-21.854l-2.684,2.963C81.316,49.778,84.556,56.518,84.556,64z" fill="#303031"/></g><g><path d="M74.556,64c0,4.343-1.801,8.268-4.688,11.085l2.681,2.96c3.694-3.551,6.007-8.529,6.007-14.045      c0-5.722-2.492-10.86-6.431-14.43l-2.681,2.96C72.575,55.368,74.556,59.452,74.556,64z" fill="#303031"/></g></g></g><polygon fill="#303031" points="65.412,39 48.427,50 38.588,50 38.588,78 48.403,78 65.412,89  "/></g></svg>
+            <p class="title"></p>
+            <p class="loading"></p>
+         </p>
+         <div id="self_definition"></div>
+         <div id="no_def" class="error" style="display:none"></div>
+         <ul id="definitions"></ul>
+         <textarea id="self_input" style="width:87%" rows="5" style="display:none"></textarea>
+         <br/>
+         <input type="checkbox" id="only_self_input" style="display:none"><label for="only_self_input" id="only_self_input_label" style="display:none">Only show notes and selected</label>
+         <div id="expand"></div>
+      </div>
+
+      <div id="translation_tmpl" class="tmpl">
+         <p>
+            <p class="title centered_title"></p>
+         </p>
+         <div id="no_def" class="error" style="display:none"></div>
+         <ul id="definitions"></ul>
+      </div>
+
+      <svg id="save_icon_tmpl" class="tmpl" style="width: 71px;" viewBox="0 0 380 285" fill="none" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" clip-rule="evenodd" d="M130 70C130 63.3726 135.373 58 142 58H188.544C191.727 58 194.779 59.2643 197.029 61.5147L246.485 110.971C248.736 113.221 250 116.273 250 119.456V214C250 220.627 244.627 226 238 226H202.749C199.32 230.463 195.358 234.495 190.958 238H238C251.255 238 262 227.255 262 214V119.456C262 113.091 259.471 106.986 254.971 102.485L205.515 53.0294C201.014 48.5286 194.909 46 188.544 46H142C128.745 46 118 56.7452 118 70V121.845C121.817 120 125.831 118.495 130 117.371V70Z" fill="#212121"/><path d="M196 52V94C196 103.941 204.059 112 214 112H256" stroke="#212121" stroke-width="12"/><path fill-rule="evenodd" clip-rule="evenodd" d="M94 184C94 154.177 118.177 130 148 130C177.823 130 202 154.177 202 184C202 213.823 177.823 238 148 238C118.177 238 94 213.823 94 184ZM176.773 188.773C174.137 191.409 169.863 191.409 167.227 188.773L154 175.546L154 208C154 211.314 151.314 214 148 214C144.686 214 142 211.314 142 208L142 175.546L128.773 188.773C126.137 191.409 121.863 191.409 119.227 188.773C116.591 186.137 116.591 181.863 119.227 179.227L143.227 155.227C145.863 152.591 150.137 152.591 152.773 155.227L176.773 179.227C179.409 181.863 179.409 186.137 176.773 188.773Z" fill="#212121"/></svg>
+
+   <svg id="edit_icon_tmpl" class="tmpl" style="width:35px;height:35px" version="1.1" id="????_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" width="1000px" height="1000px" viewBox="0 0 1000 1000" enable-background="new 0 0 1000 1000" xml:space="preserve"><path d="M968.161,31.839c36.456,36.456,36.396,95.547,0,132.003l-43.991,43.991L792.138,75.83l43.991-43.991 C872.583-4.586,931.704-4.617,968.161,31.839z M308.238,559.79l-43.96,175.963l175.963-43.991l439.938-439.938L748.147,119.821 L308.238,559.79z M746.627,473.387v402.175H124.438V253.373h402.204l124.407-124.438H0V1000h871.064V348.918L746.627,473.387z"/></svg>
+
+   <svg version="1.1" id="delete_action_tmpl" style="width: 42px;height:42px;" class="tmpl" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" width="900.5px" height="900.5px" viewBox="0 0 900.5 900.5" style="enable-background:new 0 0 900.5 900.5;" xml:space="preserve"><g><path d="M176.415,880.5c0,11.046,8.954,20,20,20h507.67c11.046,0,20-8.954,20-20V232.487h-547.67V880.5L176.415,880.5z M562.75,342.766h75v436.029h-75V342.766z M412.75,342.766h75v436.029h-75V342.766z M262.75,342.766h75v436.029h-75V342.766z"/><path d="M618.825,91.911V20c0-11.046-8.954-20-20-20h-297.15c-11.046,0-20,8.954-20,20v71.911v12.5v12.5H141.874	c-11.046,0-20,8.954-20,20v50.576c0,11.045,8.954,20,20,20h34.541h547.67h34.541c11.046,0,20-8.955,20-20v-50.576 c0-11.046-8.954-20-20-20H618.825v-12.5V91.911z M543.825,112.799h-187.15v-8.389v-12.5V75h187.15v16.911v12.5V112.799z"/></svg>
+
+   <svg enable-background="new 0 0 24 24" id="expand_tmpl" class="tmpl" version="1.0" viewBox="0 0 24 24" xml:space="preserve" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><polyline fill="none" points="21,8.5 12,17.5 3,8.5 " stroke="#000000" stroke-miterlimit="10" stroke-width="2"/></svg>
+
+   </body>
+</html>
