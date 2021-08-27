@@ -404,7 +404,7 @@ window.onerror = function (msg, url, line, col, error) {
 
 window.onhashchange = function(){
    var str = location.hash;
-   var s = decodeURIComponent(str.replace(/^#!?/,''));
+   var s = decodeURIComponent(str.replace(/^#!?/,'')).trim();
    SearchEngine.search(s);
 };
 
@@ -421,7 +421,7 @@ $(document).ready(function() {
       var self = this;
 
       $.doTimeout( 'searchID', 250, function() {
-         SearchEngine.search($(self).val().replace(/\s*:\s*/,':'), true);
+         SearchEngine.search($(self).val().replace(/\s*:\s*/,':').trim(), true);
       });
    });
 });
