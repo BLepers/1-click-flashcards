@@ -11,7 +11,7 @@ var specialWords = {
                   <li>6 decreases the quizz frequency of the card</li>
                </ul>
                See <a href="https://en.wikipedia.org/wiki/SuperMemo">wikipedia</a> for a description of the algorithm</li>
-               <li>You can also search within the definitions of saved words by searching for s:regexp. E.g.: <a href='#!s:run'>s:run</a> will search for all definitions matching "run" (possibly within a word), and  <a href='#!s:\\b(run)\\b'>s:\\b(run)\\b</a> will search for all definitions containing the word "run".</li>
+               <li>You can also search within the definitions of saved words by searching for s:regexp. E.g.: <a href='#!s:run|walk|move'>s:run|walk|move</a> will search for all definitions matching "run" (possibly within a word), and  <a href='#!s:\\b(run)\\b'>s:\\b(run)\\b</a> will search for all definitions containing the word "run".</li>
                <li>You can translate from french to english using t:word, e.g. <a href='#!t:génial'>t:génial</a>. It is not possible to save translations but you can click on the translated words to save them in your flashcards.</li>`
 };
 
@@ -70,7 +70,7 @@ class SmallFlashCard {
       if(SmallFlashCardState.nbDisplayedWords != SmallFlashCardState.uid)
          $("#flashcard_list_info").append(' / ' + SmallFlashCardState.uid);
       if(SmallFlashCardState.loading)
-         $("#flashcard_list_info").append(' (loading)');
+         $("#flashcard_list_info").append(' (loading, might be slow because regex-search is disabled on the server side due to read-only mode)');
    }
 
    static showWord(w) {
