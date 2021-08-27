@@ -9,7 +9,7 @@ Effortless flashcards that fill their content automatically. Type a word and the
 * Read-only mode to share your flashcards
 
 ## Demo
-* <a href="https://flashcards.en-vadrouille.org">Demo</a> (read only)
+* <a href="https://flashcards.envadrouille.org">Demo</a> (read only)
 
 ## Screenshots
 
