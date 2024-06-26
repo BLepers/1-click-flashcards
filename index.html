@@ -178,6 +178,17 @@
          margin-right:20px;
          text-align:justify;
          list-style-type: symbols;
+         padding-left:40px;
+      }
+
+      /* Remove the 1. if the ul has only one element */
+      .flashcard #definitions li:only-child {
+         list-style-type: none;
+         margin-left:-20px;
+      }
+
+      .flashcard #definitions blockquote {
+         margin:10px;
       }
 
       .flashcard #definitions .note {
@@ -213,6 +224,10 @@
          top: 3px;
          left: -32px;
       }
+      .flashcard .selected_content:only-child:before {
+         left: -16px;
+      }
+
       @media(hover: hover) and (pointer: fine) {
          .flashcard .selected_content:hover {
             border:1px red;
@@ -220,10 +235,11 @@
          }
       }
 
-       .flashcard #self_definition {
-          color: #70757a;
-       }
+      .flashcard #self_definition {
+         color: #70757a;
+      }
 
+      .flashcard #definitions ex,
       .flashcard .content .example  {
          color: #70757a;
       }

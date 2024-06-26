@@ -268,11 +268,29 @@ class ReversoTranslationsDictionary extends Dictionary {
    }
 }
 
+class StarDict extends Dictionary {
+   static id() {
+     return "StarDict Dictionary";
+   }
+
+   static fetch(word, cb) {
+      var url = "./php/stardict.php?word=";
+       $.get(url+encodeURIComponent(word)).done(function( data ) {
+         cb([{
+               "definition":data,
+               "dictionary":"stardict",
+         }]);
+      }).fail(function(e) {
+         window.dispatchEvent(new CustomEvent('myerror', { detail: "Error parsing " + url + encodeURIComponent(encodeURIComponent(word.replace(/ /g, '*'))) }));
+      });
+   }
+}
 
 var dicts = {
    "api":ApiDictionary,
-   "oxford":OxfordDictionary,
+   //"oxford":OxfordDictionary,
    "reverso": ReversoDictionary,
    "urban": UrbanDictionary,
+   "stardict": StarDict,
 };
 var defaultDict = "api";
